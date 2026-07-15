@@ -8,7 +8,7 @@ import {
   calculateProgress,
   generateStatistics,
   createNewStudyRecord
-} from '../utils/ebbinghaus';
+} from '../../utils/ebbinghaus';
 
 // 초기 상태
 const initialState = {
