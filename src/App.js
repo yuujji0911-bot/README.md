@@ -10,33 +10,27 @@ import {
 } from 'react-native';
 
 import { store } from './redux/store';
-import { grammarUnits } from './data/grammarData';
+import { getReviewItems } from './data/reviewItems';
 import { initializeCards, selectProgress, selectStatistics } from './redux/slices/studySlice';
 import { selectAllMissingNotes, selectTotalMissing } from './redux/slices/notesSlice';
 import RecallPage from './screens/RecallPage';
 
-const unit = grammarUnits[0];
-const cards = unit.sections.flatMap((section) => section.cards);
+const reviewItems = getReviewItems();
 
 function HomeScreen({ onNavigate }) {
-  const dispatch = useDispatch();
   const progress = useSelector(selectProgress);
   const totalMissing = useSelector(selectTotalMissing);
-
-  useEffect(() => {
-    dispatch(initializeCards({ cards }));
-  }, [dispatch]);
 
   return (
     <ScrollView contentContainerStyle={styles.screen}>
       <Text style={styles.title}>복습노트</Text>
-      <Text style={styles.subtitle}>{unit.name} ({unit.date})</Text>
+      <Text style={styles.subtitle}>망각곡선 기반 복습 현황 (7/13 · 7/14)</Text>
 
       <View style={styles.card}>
         <Text style={styles.cardLabel}>전체 진도</Text>
         <Text style={styles.bigNumber}>{progress ? `${progress.completionRate}%` : '0%'}</Text>
         <Text style={styles.cardSub}>
-          {progress ? `${progress.completed} / ${progress.total} 완료` : `0 / ${cards.length} 완료`}
+          {progress ? `${progress.completed} / ${progress.total} 완료` : `0 / ${reviewItems.length} 완료`}
         </Text>
       </View>
 
@@ -139,6 +133,11 @@ function Tabs({ route, onNavigate }) {
 
 function Root() {
   const [route, setRoute] = useState('home');
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(initializeCards({ cards: reviewItems }));
+  }, [dispatch]);
 
   return (
     <SafeAreaView style={styles.container}>

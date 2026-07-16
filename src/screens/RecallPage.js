@@ -3,6 +3,7 @@ import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-nati
 import { grammarUnits, vocabularyData } from '../data/grammarData';
 import RecallCard from '../components/RecallCard';
 import RecallBlank from '../components/RecallBlank';
+import ReviewFooter, { ReviewBadge } from '../components/ReviewFooter';
 
 function buildPages() {
   const order = [];
@@ -136,15 +137,19 @@ export default function RecallPage() {
         {page.blocks.map((block) =>
           block.kind === 'unit' ? (
             <View key={block.unit.id} style={styles.unitBlock}>
+              <ReviewBadge id={block.unit.id} />
               <Text style={styles.unitTitle}>{block.unit.name}</Text>
               <Text style={styles.unitMeta}>{block.unit.source}</Text>
               {block.unit.sections.map((section) => (
                 <SectionBlock key={section.id} section={section} />
               ))}
+              <ReviewFooter id={block.unit.id} label={block.unit.name} />
             </View>
           ) : (
             <View key={block.vocab.id} style={styles.unitBlock}>
+              <ReviewBadge id={block.vocab.id} />
               <VocabBlock vocab={block.vocab} />
+              <ReviewFooter id={block.vocab.id} label={block.vocab.category} />
             </View>
           )
         )}
