@@ -11,37 +11,12 @@ import {
 
 import { store } from './redux/store';
 import { grammarUnits } from './data/grammarData';
-import {
-  initializeCards,
-  markCorrect,
-  markWrong,
-  goToNextCard,
-  selectCurrentCard,
-  selectCurrentCardIndex,
-  selectAllCards,
-  selectProgress,
-  selectStatistics
-} from './redux/slices/studySlice';
-import { addMissingNote, selectAllMissingNotes, selectTotalMissing } from './redux/slices/notesSlice';
+import { initializeCards, selectProgress, selectStatistics } from './redux/slices/studySlice';
+import { selectAllMissingNotes, selectTotalMissing } from './redux/slices/notesSlice';
+import RecallPage from './screens/RecallPage';
 
 const unit = grammarUnits[0];
 const cards = unit.sections.flatMap((section) => section.cards);
-
-function cardLabel(card) {
-  return (
-    card.meaning ||
-    card.category ||
-    card.title ||
-    JSON.stringify(card).slice(0, 60)
-  );
-}
-
-function cardDetail(card) {
-  const { id, meaning, category, ...rest } = card;
-  return Object.entries(rest)
-    .map(([key, value]) => `${key}: ${Array.isArray(value) ? value.join(', ') : value}`)
-    .join('\n');
-}
 
 function HomeScreen({ onNavigate }) {
   const dispatch = useDispatch();
@@ -82,81 +57,8 @@ function HomeScreen({ onNavigate }) {
   );
 }
 
-function StudyScreen({ onNavigate }) {
-  const dispatch = useDispatch();
-  const currentCard = useSelector(selectCurrentCard);
-  const currentIndex = useSelector(selectCurrentCardIndex);
-  const allCards = useSelector(selectAllCards);
-  const [revealed, setRevealed] = useState(false);
-
-  if (!currentCard) {
-    return (
-      <View style={styles.screen}>
-        <Text style={styles.title}>학습할 카드가 없습니다</Text>
-        <TouchableOpacity style={styles.primaryButton} onPress={() => onNavigate('home')}>
-          <Text style={styles.primaryButtonText}>홈으로</Text>
-        </TouchableOpacity>
-      </View>
-    );
-  }
-
-  const advance = () => {
-    setRevealed(false);
-    if (currentIndex < allCards.length - 1) {
-      dispatch(goToNextCard());
-    } else {
-      onNavigate('home');
-    }
-  };
-
-  const handleAnswer = (isCorrect) => {
-    if (isCorrect) {
-      dispatch(markCorrect({ cardId: currentCard.id }));
-    } else {
-      dispatch(markWrong({ cardId: currentCard.id }));
-      dispatch(
-        addMissingNote({
-          cardId: currentCard.id,
-          answer: null,
-          correctAnswer: cardDetail(currentCard),
-          unitId: unit.id,
-          sectionId: null
-        })
-      );
-    }
-    advance();
-  };
-
-  return (
-    <View style={styles.screen}>
-      <Text style={styles.subtitle}>
-        {currentIndex + 1} / {allCards.length}
-      </Text>
-      <View style={styles.studyCard}>
-        <Text style={styles.studyPrompt}>{cardLabel(currentCard)}</Text>
-        {revealed && <Text style={styles.studyDetail}>{cardDetail(currentCard)}</Text>}
-      </View>
-
-      {!revealed ? (
-        <TouchableOpacity style={styles.primaryButton} onPress={() => setRevealed(true)}>
-          <Text style={styles.primaryButtonText}>정답 보기</Text>
-        </TouchableOpacity>
-      ) : (
-        <View style={styles.row}>
-          <TouchableOpacity style={[styles.answerButton, styles.wrongButton]} onPress={() => handleAnswer(false)}>
-            <Text style={styles.primaryButtonText}>틀렸어요</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={[styles.answerButton, styles.correctButton]} onPress={() => handleAnswer(true)}>
-            <Text style={styles.primaryButtonText}>맞았어요</Text>
-          </TouchableOpacity>
-        </View>
-      )}
-
-      <TouchableOpacity style={styles.linkButton} onPress={() => onNavigate('home')}>
-        <Text style={styles.linkButtonText}>홈으로</Text>
-      </TouchableOpacity>
-    </View>
-  );
+function StudyScreen() {
+  return <RecallPage />;
 }
 
 function StatisticsScreen({ onNavigate }) {
@@ -323,40 +225,10 @@ const styles = StyleSheet.create({
     color: '#5856d6',
     fontSize: 14
   },
-  studyCard: {
-    backgroundColor: '#ffffff',
-    borderRadius: 16,
-    padding: 24,
-    minHeight: 180,
-    justifyContent: 'center',
-    marginBottom: 16
-  },
-  studyPrompt: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: '#1c1c1e',
-    marginBottom: 12
-  },
   studyDetail: {
     fontSize: 14,
     color: '#3a3a3c',
     lineHeight: 20
-  },
-  row: {
-    flexDirection: 'row',
-    gap: 12
-  },
-  answerButton: {
-    flex: 1,
-    borderRadius: 10,
-    paddingVertical: 14,
-    alignItems: 'center'
-  },
-  wrongButton: {
-    backgroundColor: '#ff3b30'
-  },
-  correctButton: {
-    backgroundColor: '#34c759'
   },
   statRow: {
     flexDirection: 'row',
