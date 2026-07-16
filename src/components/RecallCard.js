@@ -48,10 +48,13 @@ function FieldValue({ fieldKey, value }) {
       const isBlank = BLANK_KEYS.has(fieldKey) || (!LABEL_KEYS.has(fieldKey) && !hasKorean(value[0]));
       if (isBlank) {
         return (
-          <View style={styles.wrapRow}>
-            {value.map((v, i) => (
-              <RecallBlank key={i} text={v} size="sm" />
-            ))}
+          <View>
+            <CountLabel count={value.length} />
+            <View style={styles.wrapRow}>
+              {value.map((v, i) => (
+                <RecallBlank key={i} text={v} size="sm" />
+              ))}
+            </View>
           </View>
         );
       }
@@ -69,6 +72,7 @@ function FieldValue({ fieldKey, value }) {
     // array of objects (e.g. expressions: [{term, meaning}])
     return (
       <View>
+        <CountLabel count={value.length} />
         {value.map((item, i) => (
           <View key={i} style={styles.objectRow}>
             <ObjectFields obj={item} />
@@ -83,6 +87,11 @@ function FieldValue({ fieldKey, value }) {
   }
 
   return <Text style={styles.labelText}>{String(value)}</Text>;
+}
+
+function CountLabel({ count }) {
+  if (count <= 1) return null;
+  return <Text style={styles.countLabel}>총 {count}개</Text>;
 }
 
 function ObjectFields({ obj }) {
@@ -126,6 +135,14 @@ const styles = StyleSheet.create({
   wrapRow: {
     flexDirection: 'row',
     flexWrap: 'wrap'
+  },
+  countLabel: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#9a94d6',
+    marginBottom: 3,
+    textTransform: 'uppercase',
+    letterSpacing: 0.3
   },
   labelText: {
     fontSize: 14,

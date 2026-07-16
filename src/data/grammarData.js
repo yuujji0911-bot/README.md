@@ -359,6 +359,11 @@ export const grammarUnits = [
             pattern: 'It + be + 형 + to V',
             meaning: 'for+목적격=의미상 주어',
             adjectives: ['difficult', 'hard', 'easy', 'possible', 'important', 'necessary', 'convenient'],
+            difficulty: 80
+          },
+          {
+            id: 'card-4-1-2',
+            meaning: '3형식: 동사의 목적어로 to V',
             verbs: ['aim', 'hope', 'need', 'want', 'plan', 'promise', 'pretend', 'desire', 'decide', 'determine', 'learn', 'refuse', 'manage', 'strive'],
             difficulty: 80
           }
